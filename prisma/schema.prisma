@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String
+  cnpj      String   @unique
+  units     Unit[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Unit {
+  id        Int        @id @default(autoincrement())
+  name      String
+  companyId Int
+  company   Company    @relation(fields: [companyId], references: [id])
+  employees Employee[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Journey {
+  id            Int        @id @default(autoincrement())
+  name          String
+  dayOfWeek     String
+  entry1        String
+  exit1         String
+  entry2        String
+  exit2         String
+  totalHours    String
+  employees     Employee[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model Employee {
+  id             Int                    @id @default(autoincrement())
+  name           String
+  cpf            String                 @unique
+  email          String?                @unique
+  role           String
+  salary         String?
+  unitId         Int
+  unit           Unit                   @relation(fields: [unitId], references: [id])
+  journeyId      Int
+  journey        Journey                @relation(fields: [journeyId], references: [id])
+  records        TimeRecord[]
+  vacations      Vacation[]
+  justifications AbsenceJustification[]
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+}
+
+
+
+model TimeRecord {
+  id               Int        @id @default(autoincrement())
+  employeeId       Int
+  employee         Employee   @relation(fields: [employeeId], references: [id])
+  timestamp        DateTime   // Data e hora exata da batida
+  type             String
+  adjusted         Boolean    @default(false)
+  adjustmentReason String?
+  createdAt        DateTime   @default(now())
+}
+
+model Vacation {
+  id          Int      @id @default(autoincrement())
+  employeeId  Int
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  startDate   DateTime
+  endDate     DateTime
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
+model AbsenceJustification {
+  id          Int                 @id @default(autoincrement())
+  employeeId  Int
+  employee    Employee            @relation(fields: [employeeId], references: [id])
+  date        DateTime
+  reason      String
+  status      String              @default("PENDING")
+  documentUrl String?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // ADMIN, RH, GESTOR
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
