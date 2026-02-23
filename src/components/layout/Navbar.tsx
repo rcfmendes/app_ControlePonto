@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Clock, Building, Users, Calendar, FileText, BarChart3, Settings, UserCog, LogOut } from 'lucide-react';
 
+import { ThemeToggle } from "./ThemeToggle";
+
 export function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
@@ -52,7 +54,8 @@ export function Navbar() {
                         <BarChart3 className="w-4 h-4" /> Relatórios
                     </Link>
                     <div className="w-px h-6 bg-slate-200 mx-2"></div>
-                    <button onClick={handleLogout} className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors flex items-center gap-2">
+                    <ThemeToggle />
+                    <button onClick={handleLogout} className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors flex items-center gap-2 ml-4">
                         <LogOut className="w-4 h-4" /> Sair
                     </button>
                 </div>
